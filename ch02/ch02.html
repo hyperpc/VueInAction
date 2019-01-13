@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VUE Demo</title>
+    </head>
+    <body>
+        <div id="app">            
+            <p>
+                <button v-on:click="handleClick">{{btnText}}</button>
+                <button @click="handleClick">{{btnText}}</button>
+                <span v-if="show" style="color:red;">显示这段文本</span>
+            </p>
+            <input type="text" v-model="name" placeholder="你的名字">
+            <span>你好， {{name}}</span>
+            <h2>{{date | formatDate}}</h2>
+            <span v-html="link"></span>
+            <p v-pre>{{这里的内容不会被编译}}</p>
+            <p>{{number / 10}}</p>
+            <p>{{isOk?'Yes':'No'}}</p>
+            <p>{{text.split(',').reverse().join(',')}}</p>
+            <p><a v-bind:href="url">链接</a></p>
+            <p><img v-bind:src="imgUrl"></p>
+            <p><a :href="url">链接</a></p>
+            <p><img :src="imgUrl"></p>
+        </div>
+        <script src="../vue.js"></script>
+        <script>
+            var padDate = function(value){
+                return value<10?'0'+value:value;
+            }
+
+            var mydata={
+                show: false
+                ,btnText: "显示上面的文字"
+                ,name: 'abc'
+                ,date: new Date()
+                ,link: '<a href="#"></a>'
+                ,number: 100
+                ,isOk: false
+                ,text: '123,456'
+                ,url: 'https://cn.vuejs.org/'
+                ,imgUrl: 'https://cn.vuejs.org/images/logo.png'
+            }
+            var app = new Vue({
+                el: '#app',
+                data: mydata,
+                created: function (){
+                    console.log(this.name);
+                },
+                mounted: function(){
+                    this.init('初始化时调用');
+                    console.log(this.$el);
+                    var _this = this;
+                    this.timer=setInterval(function(){
+                        _this.date=new Date();
+                    },1000);
+                },
+                beforeDestroy: function(){
+                    if(this.timer){
+                        clearInterval(this.timer);
+                    }
+                },
+                filters:{
+                    formatDate: function(value){
+                        var date = new Date(value);
+                        var year = date.getFullYear();
+                        var month = padDate(date.getMonth()+1);
+                        var day = padDate(date.getDate());
+                        var hours = padDate(date.getHours());
+                        var minutes = padDate(date.getMinutes());
+                        var seconds = padDate(date.getSeconds());
+
+                        return year + '/' + month+'/'+day+' '+hours+':'+minutes+':'+seconds;
+                    }
+                },
+                methods:{
+                    init: function(text){
+                        console.log(text);
+                    },
+                    handleClick: function(){
+                        debugger;
+                        var _show = app.show;
+                        app.show = !_show;
+                        if(app.show){
+                            app.btnText="隐藏上面的文字";
+                        }else{
+                            app.btnText="显示上面的文字";
+                        }
+                    }
+                }
+            })
+
+            app.init('外部调用');
+        </script>
+    </body>
+</html>
