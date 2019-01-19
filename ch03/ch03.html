@@ -5,17 +5,81 @@
         <title>Vue Demo</title>
     </head>
     <body>
+        <div id="app1">
+            <p>{{text}}</p>
+        </div>
         <div id="app">
-
+            <p>{{reversedText}}</p>
+            <p>总价: {{prices}}</p>
+            <p>姓名: {{fullName}}</p>
         </div>
         <script src="../vue.js"></script>
         <script>
             var mydata = {
-
+                text: '123,456'
+                ,package1:[
+                    {
+                        name:'iPhone X',
+                        price:8299,
+                        count:2
+                    },{
+                        name:'iPad',
+                        price:2888,
+                        count:1
+                    }
+                ]
+                ,package2:[
+                    {
+                        name:'apple',
+                        price:3,
+                        count:5
+                    },{
+                        name:'banana',
+                        price:2,
+                        count:10
+                    }
+                ]
+                ,firstName:'Yang Po'
+                ,lastName: 'Hou'
             }
+
+            var app1=new Vue({
+                el: '#app1',
+                data: mydata
+            });
+
             var app = new Vue({
                 el:'#app',
                 data: mydata
+                ,computed:{
+                    reversedText: function(){
+                        return this.text.split(',').reverse().join(',');
+                    }
+                    ,prices: function(){
+                        var prices=0;
+                        for(var i=0;i<this.package1.length;i++){
+                            prices+=this.package1[i].price*this.package1[i].count;
+                        }
+                        for(var i=0;i<this.package2.length;i++){
+                            prices+=this.package2[i].price*this.package2[i].count;
+                        }
+                        return prices;
+                    }
+                    ,fullName: {
+                        get: function(){
+                            return this.firstName + ' ' + this.lastName;
+                        }
+                        ,set: function(newValue){
+                            debugger;
+                            var names=newValue.split(' ');
+                            this.firstName = names[0];
+                            this.lastName=names[names.length - 1];
+                        }
+                    }
+                }
+                ,mounted: function(){
+                    fullName.set('Robert Hou');
+                }
             })
         </script>
     </body>

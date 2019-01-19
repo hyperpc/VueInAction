@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VUE Demo</title>
+    </head>
+    <body>
+        <div id="app">
+            <div class="static" :class="{'active': isActive, 'error': isError}">绑定class</div>
+            <div :class="classes">绑定classes</div>
+            <div :class="[isActive ? activeCls : '', errorCls, {'log':isLog}]">绑定class array</div>
+            <p><button :class='btnClasses'>button class</button></p>
+            <div :style="{'color': color, 'fontSize': fontSize+'px'}">文本1</div>
+            <div :style="styles">文本2</div>
+        </div>
+        <script src="../vue.js"></script>
+        <script>
+            var mydata = {
+                isActive: true,
+                isError: null,
+                activeCls: 'active',
+                errorCls: 'error',
+                isLog: true,
+                size:'large',
+                disabled: true,
+
+                color: 'red',
+                fontSize: 14,
+                
+                styles: {
+                    color: 'blue',
+                    fontSize: 14+'px'
+                }
+            }
+            var app = new Vue({
+                el:'#app',
+                data: mydata
+                ,computed: {
+                    classes: function(){
+                        return {
+                            active: this.isActive && !this.isError,
+                            'text-fail': this.error &&  this.error.type==='fail'
+                        }
+                    }
+                    ,btnClasses: function(){
+                        return [
+                            'btn',
+                            {
+                                ['btn-'+this.size]:this.size!=='',
+                                ['btn-disabled']:this.disabled
+                            }
+                        ];
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>

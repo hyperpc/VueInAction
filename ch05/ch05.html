@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>VUE Demo</title>
+</head>
+
+<body>
+    <div id="app">
+        <span v-once>{{message1}}</span>
+        <div v-once>
+            <span v-once>{{message2}}</span>
+        </div>
+
+        <p v-if="status===1">status为1显示该行</p>
+        <p v-else-if="status===2">status为2显示该行</p>
+        <p v-else>否则显示该行</p>
+        <template v-if="status===1">
+            <p>这是template内的一段文本</p>
+            <p>这是template内的一段文本</p>
+            <p>这是template内的一段文本</p>
+        </template>
+        <p>
+            <template v-if="type==='name'">
+                <label>用户名：</label>
+                <input placeholder="输入用户名">
+            </template>
+            <template v-else>
+                <label>邮箱：</label>
+                <input placeholder="输入邮箱">
+            </template>
+            <button @click="handleToggleClick">切换输入类型(不带key属性，输入值不会丢失)</button>
+        </p>
+        <p>
+            <template v-if="type2==='name'">
+                <label>用户名：</label>
+                <input placeholder="输入用户名" key='name-input'>
+            </template>
+            <template v-else>
+                <label>邮箱：</label>
+                <input placeholder="输入邮箱" key='mail-input'>
+            </template>
+            <button @click="handleToggleClick2">切换输入类型(带key属性，输入值会丢失)</button>
+        </p>
+        <p v-show="isShow">当v-show为true时显示该行</p>
+        <p>
+            选择v-if还是v-show？<br>
+            v-if是真正的条件渲染，她会根据表达式适当销毁或重建页面元素及绑定的事件或子组件。若表达式初始值是false，则元素、组件不会渲染，只有当条件第一次为true才开始编译。<br>
+            而v-show只是简单地CSS属性切换，无论条件真假，都会编译。另外，v-show不能用在template上<br>
+            总之，v-if适合条件不经常变换的场景，因为切换开销相对较大；v-show适用于频繁切换。
+        </p>
+
+        <span v-for="n in 10">{{n}}</span>
+        <ul>
+            <li v-for="(book, index) in books">{{index}} - {{book.name}}</li>
+        </ul>
+        <ul>
+            <template v-for="book in books">
+                <li>书名：{{book.name}}</li>
+                <li>作者：{{book.author}}</li>
+            </template>
+        </ul>
+        <span v-for="value in user">{{value}}</span>
+        <ul>
+            <li v-for="(value, key, index) in user">
+                {{index}} - {{key}}: {{value}}
+            </li>
+        </ul>
+
+        <p>Vue的数组方法：push(), pop(), shift(), unshift(), splice(), sort(), reverse(), filter(), concat(), slice()</p>
+        <ul>
+            <li v-for="(book, index) in filterBooks">{{index}} - {{book.name}}</li>
+        </ul>
+        <p>通过索引更新数组元素的值或者更改数组长度，Vue检测不到，不会引发视图更新</p>
+        <ul>
+            <template v-for="book in computedBooks">
+                <li>书名：{{book.name}}</li>
+                <li>作者：{{book.author}}</li>
+            </template>
+        </ul>
+        <ul>
+            <template v-for="book in sortedBooks">
+                <li>书名：{{book.name}}</li>
+                <li>作者：{{book.author}}</li>
+            </template>
+        </ul>
+    </div>
+    <script src="../vue.js"></script>
+    <script>
+        var mydata = {
+            message1:'这是一段文本'
+            , message2:'这是另外一段文本'
+
+            , status:1
+            , type:'name'
+            , type2:'name'
+
+            ,isShow: true
+
+            ,books: [
+                {
+                    name: '《Vue.js实战1》',
+                    author:'梁灏1'
+                },{
+                    name: '《Javascript语言精粹0000000000000000001》',
+                    author:'Douglas Crockford'
+                },{
+                    name: '《Javascript高级程序设计000》',
+                    author:'Nicholas C.Zakas'
+                }
+            ]
+            ,filterBooks:[]
+            ,user:{
+                name:'侯哥',
+                gender:'男',
+                age:30
+            }
+        };
+        var app = new Vue({
+            el: '#app',
+            data: mydata,
+            methods: {
+                handleToggleClick: function () {
+                    this.type = this.type === 'name' ? 'mail' : 'name';
+                }
+                ,handleToggleClick2: function () {
+                    this.type2 = this.type2 === 'name' ? 'mail' : 'name';
+                }
+            }
+            ,computed: {
+                computedBooks: function(){
+                    return this.books.filter(function(item){
+                        return item.name.match(/Javascript/);
+                    });
+                }
+                ,sortedBooks: function(a,b){
+                    return this.books.sort(function(a,b){
+                        return a.name.length<b.name.length;
+                    });
+                }
+            }
+        });
+
+        /*
+        app.books.push({
+            name: '《Javascript高级程序设计2》',
+            author:'Nicholas C.Zakas'
+        });
+        app.filterBooks = app.books.filter(function(item){
+            return item.name.match(/Javascript/);
+        });
+
+        Vue.set(app.books, 2, {
+            name: '《CSS揭秘》',
+            author:'[希]Lea Verou'
+        });
+        app.$set(app.books, 1, {
+            name: '《Javascript语言精粹2》',
+            author:'Douglas Crockford'
+        });
+        app.books.splice(0, 1, {
+            name:'test',
+            author:'test'
+        });
+
+        app.books.splice(1);
+        */
+    </script>
+</body>
+
+</html>
