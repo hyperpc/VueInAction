@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VUE Demo</title>
+    </head>
+    <body>
+        <div id="app">
+            <p>
+                <input type="text" v-model="msg" placeholder="输入...">
+                <p>实时输入的内容是(原文)：{{msg}}</p>
+            </p>
+            <p>
+                <textarea v-model="text" placeholder="输入..."></textarea>
+                <p>实时输入的内容是(原文)：</p>
+                <p style="white-space:pre;">{{text}}</p>
+            </p>
+            <p>
+                <input type="text" @input="handleInput" placeholder="输入...">
+                <p>实时输入的内容是(事件处理过)：{{msg_new}}</p>
+            </p>
+            <p>
+                <input type="radio" :checked="picked1">
+                <label>单选按钮via picked1 : {{picked1}}</label>
+            </p>
+            <p>
+                <input type="radio" v-model="picked2" value="html" id="html">
+                <label for="html">HTML</label>
+                <br>
+                <input type="radio" v-model="picked2" value="js" id="js">
+                <label for="js">JavaScript</label>
+                <br>
+                <input type="radio" v-model="picked2" value="css" id="css">
+                <label for="css">CSS</label>
+                <br>
+
+                <label>选择的单选项via v-model和value : {{picked2}}</label>
+            </p>
+            <p>
+                <input type="checkbox" v-model="checked1" id="checked">
+                <label for="checked">选择状态:{{checked1}}</label>
+            </p>
+            <p>
+                <input type="checkbox" v-model="checked2" value="html" id="html">
+                <label for="html">HTML</label>
+                <br>
+                <input type="checkbox" v-model="checked2" value="js" id="js">
+                <label for="js">JavaScript</label>
+                <br>
+                <input type="checkbox" v-model="checked2" value="css" id="css">
+                <label for="css">CSS</label>
+                <br>
+    
+                <label>选择的多选项via v-model和value : {{checked2}}</label>
+            </p>
+            <p>select的option是选项。如果选项有value属性，则优先匹配value的值；如果没有，就直接匹配text。另外，多选和单选类似，只是select多了multiple属性。</p>
+            <p>                
+                <select v-model="selected1">
+                    <option>HTML</option>
+                    <option value="js">JavaScript</option>
+                    <option>CSS</option>
+                </select>
+                <p>您的下拉单选选择：{{selected1}}</p>
+            </p>
+            <p>                
+                <select v-model="selected2" multiple>
+                    <!--<option>html</option>
+                    <option value="js">JavaScript</option>
+                    <option>css</option>-->
+                    <option v-for="option in options" :value="option.value">{{option.text}}</option>
+                </select>
+                <p>您的下拉多选选择：{{selected2}}</p>
+            </p>
+            <p>
+                <input type="radio" v-model="picked3" :value="value3">
+                <label>单选</label>
+                <p>{{picked3}}</p>
+                <p>{{value3}}</p>
+            </p>
+            <p>
+                <input type="checkbox" v-model="toggle" :true-value="value_t1" :false-value="value_t2">
+                <label>复选框</label>
+                <p>{{toggle}}</p>
+                <p>{{value_t1}}</p>
+                <p>{{value_t2}}</p>
+            </p>
+            <p>
+                <select v-model="selected3">
+                    <option :value="{number:123}">123</option>
+                </select>
+                {{selected3.number}}
+            </p>
+            <p>
+                修饰符：.lazy, .number, .trim
+                <input type="text" v-model.lazy="msg_lazy">
+                <p>{{msg_lazy}}</p>
+                <input type="number" v-model.number="msg_number">
+                <p>{{typeof msg_number}}</p>
+                <input type="text" v-model.trim="msg_trim">
+                <p>{{msg_trim}}</p>
+            </p>
+        </div>
+
+        <script src="../vue.js"></script>
+        <script>
+            var mydata = {
+                msg: '',
+                text: '',
+                msg_new: '',
+                picked1: false,
+                picked2: 'js',
+                checked1: false,
+                checked2: ['html','js'],
+                selected1: 'html',
+                selected2: ['html','js'],
+                options:[
+                    {
+                        text: 'HTML',
+                        value: 'html'
+                    },{
+                        text: 'JavaScript',
+                        value: 'js'
+                    },{
+                        text: 'CSS',
+                        value: 'css'
+                    }
+                ],
+                picked3: false,
+                value3: 123,
+                toggle:false,
+                value_t1:'a',
+                value_t2:'b',
+                selected3:'',
+                msg_lazy:'',
+                msg_number:0,
+                msg_trim:''
+            }
+            var app = new Vue({
+                el:'#app',
+                data: mydata,
+                methods:{
+                    handleInput: function(e){
+                        this.msg_new=e.target.value + '0';
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
