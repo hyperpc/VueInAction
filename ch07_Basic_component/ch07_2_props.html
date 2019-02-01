@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VUE Demo</title>
+    </head>
+    <body>
+        <div id="app">
+            <my-component1 message="来自父组件1的数据"></my-component1>
+            <my-component2 warning-text="来自父组件2的数据"></my-component2>
+            <input type="text" v-model="parentMessage">
+            <my-component3 :message="parentMessage"></my-component3>
+            <my-component4 message="[1,2,3]"></my-component4>
+            <my-component4 :message="[1,2,3]"></my-component4>
+            props传递的是单向数据流
+            <my-component5 :init-count="5"></my-component5>
+            <my-component6 :width="100"></my-component6>
+        </div>
+        <script src="../vue.js"></script>
+        <script>
+            Vue.component('my-component1',{
+                props: ['message'],
+                template: '<div>{{message}}</div>'
+            });
+            Vue.component('my-component2',{
+                props: ['warningText'],
+                template: '<div>{{warningText}}</div>'
+            });
+            Vue.component('my-component3',{
+                props: ['message'],
+                template: '<div>{{message}}</div>'
+            });
+            Vue.component('my-component4',{
+                props: ['message'],
+                template: '<div>{{message.length}}</div>'
+            });
+            Vue.component('my-component5',{
+                props: ['initCount'],
+                template: '<div>{{count}}</div>',
+                data: function(){
+                    return {
+                        count: this.initCount+'1'
+                    };
+                }
+            });
+            Vue.component('my-component6',{
+                props: ['width'],
+                template: '<div :style="style">{{style}}</div>',
+                computed: {
+                    style:function(){
+                        return {
+                            width: this.width+'px'
+                        };
+                    }
+                }
+            });
+
+            Vue.component('my-component100',{
+                props:{
+                    propA:Number,
+                    propB:[String, Number],
+                    propC:{
+                        type: Boolean,
+                        default: true
+                    },
+                    propD:{
+                        type: Number,
+                        required: true
+                    },
+                    propE:{
+                        type: Array, //Object, Function
+                        default: function(){
+                            return [];
+                        }
+                    },
+                    propF:{
+                        validator:function(value){
+                            return value>10;
+                        }
+                    }
+                }
+            });
+
+            var app = new Vue({
+                el:'#app',
+                data:{
+                    parentMessage:''
+                }
+            })
+        </script>
+    </body>
+</html>

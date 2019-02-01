@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VUE Demo</title>
+    </head>
+    <body>
+        <div id="app">
+            <p>单个slot</p>
+            <child-component1>
+                <p>Vue组件的3个API来源：props传递数据，event触发事件，slot内容分发，作用域：父组件</p>
+                <p>slot分发的内容，作用域是在父组件上的，作用域：父组件</p>
+            </child-component1>
+
+            <p>具名slot</p>
+            <child-component2>
+                <h2 slot="header">标题</h2>
+                <p>正文</p>
+                <p>更多的正文</p>
+                <div slot="footer">底部信息</div>
+            </child-component2>
+
+            <p>作用域插槽，一种特殊的slot</p>
+            <child-component3>
+                <template scope="props">
+                    <p>来自父组件的内容</p>
+                    <p>{{props.msg}}</p>
+                </template>
+            </child-component3>
+
+            <p>列表组件</p>
+            <my-list :books="books">
+                <!--作用于插槽也可以是具名slot-->
+                <template slot="book" slot-scope="props">
+                    <li>{{props.bookName}}</li>
+                </template>
+            </my-list>
+
+            <p>访问slot,参考child-component2的mounted</p>
+
+        </div>
+        <script src="../vue.js"></script>
+        <script>
+            Vue.component('child-component1',{
+                template:'\
+                <div>\
+                    <slot>\
+                        <p>如果父组件没有插入内容，这就是默认出现的内容。作用域：子组件</p>\
+                    </slot>\
+                </div>'
+            });
+
+            Vue.component('child-component2',{
+                template:'\
+                <div class="container">\
+                    <div class="header">\
+                        <slot name="header"></slot>\
+                    </div>\
+                    <div class="main">\
+                        <slot></slot>\
+                    </div>\
+                    <div class="footer">\
+                        <slot name="footer"></slot>\
+                    </div>\
+                </div>',
+                mounted:function(){
+                    var header = this.$slots.header;
+                    console.log(header);
+                    console.log(header[0].elm.innerHTML);
+                    var main = this.$slots.default;
+                    console.log(main);
+                    console.log(main[0].elm.innerHTML);
+                    console.log(main[1].elm.innerHTML);
+                    console.log(main[2].elm.innerHTML);
+                    console.log(main[3].elm.innerHTML);
+                    console.log(main[4].elm.innerHTML);
+                    var footer = this.$slots.footer;
+                    console.log(footer);
+                    console.log(footer[0].elm.innerHTML);
+                }
+            });
+            
+            Vue.component('child-component3',{
+                template:'\
+                <div class="container">\
+                    <slot msg="来自子组件的内容"></slot>\
+                </div>'
+            });
+            
+            Vue.component('my-list',{
+                props:{
+                    books:{
+                        type:Array,
+                        default: function(){
+                            return [];
+                        }
+                    }
+                },
+                template:'\
+                <ul>\
+                    <slot name="book"\
+                        v-for="book in books"\
+                        :book-name="book.name">\
+                        <!--这里也可以写默认slot内容-->\
+                    </slot>\
+                </ul>'
+            });
+
+            var mydata={
+                books:[
+                    {name:'《Vue.js实战》'},
+                    {name:'《Javascript语言精粹》'},
+                    {name:'《Javascript高级程序设计》'},
+                ]
+            }
+
+            var app = new Vue({
+                el:'#app',
+                data:mydata
+            })
+        </script>
+    </body>
+</html>

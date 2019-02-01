@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VUE Demo</title>
+    </head>
+    <body>
+        <div id="app">
+            <my-component></my-component>            
+            <br>
+
+            嵌套注册的组件，作用域在注册的实例内有效
+            <my-component1></my-component1>
+            <br>
+
+            利用is属性挂载的组件
+            <table>
+                <tbody is="my-component"></tbody>
+            </table>
+            <br>
+
+            利用data属性注册的组件
+            <my-component2></my-component2>
+            <br>
+            
+            组件的共享对象
+            <my-component3></my-component3>
+            <my-component3></my-component3>
+            组件的非共享对象
+            <my-component4></my-component4>
+            <my-component4></my-component4>
+        </div>
+        <script src="../vue.js"></script>
+        <script>
+            Vue.component('my-component',{
+                template: '<div>这是我的第一个组件的内容</div>'
+            });
+            var child = {
+                template: '<div>局部注册组件的内容</div>'
+            };
+            Vue.component('my-component2',{
+                template: '<div>{{message}}</div>',
+                data: function(){
+                    return {
+                        message: 'data属性注册的组件内容'
+                    }
+                }
+            });
+
+            var sharedCnt = {
+                counter:0
+            };
+            Vue.component('my-component3',{
+                template: '<button @click="counter++">{{counter}}</button>',
+                data: function(){
+                    return sharedCnt;
+                }
+            });
+            Vue.component('my-component4',{
+                template: '<button @click="counter4++">{{counter4}}</button>',
+                data: function(){
+                    return { counter4:0 };
+                }
+            });
+
+            var app = new Vue({
+                el:'#app',
+                components:{
+                    'my-component1': child
+                }
+            })
+        </script>
+    </body>
+</html>

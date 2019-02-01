@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VUE Demo</title>
+    </head>
+    <body>
+        <div id="app">
+            <p>递归组件</p>
+            <child-component1 :count="1">
+            </child-component1>
+
+            <p>内联组件</p>
+            <p>{{message}}</p>
+            <child-component2 inline-template>
+                <div>
+                    <h2>在父组件中定义子组件的模板</h2>
+                    <p>{{message}}</p>
+                    <p>{{msg}}</p>
+                </div>
+            </child-component2>
+
+            <p>动态组件</p>
+            <component :is="currentView"></component>
+            <button @click="handleChangeView('A')">切换到A</button>
+            <button @click="handleChangeView('B')">切换到B</button>
+            <button @click="handleChangeView('C')">切换到C</button>
+            <component :is="currentView2"></component>
+            
+            <p>异步组件</p>
+            <child-component3></child-component3>
+        </div>
+        <script src="../vue.js"></script>
+        <script>
+            Vue.component('child-component1',{
+                name:'child-component1',
+                props:{
+                    count:{
+                        type:Number,
+                        default:1
+                    }
+                },
+                template:'\
+                <div class="child">\
+                    <child-component1\
+                        :count="count+1"\
+                        v-if="count<3">\
+                    </child-component1>\
+                </div>'
+            });
+
+            Vue.component('child-component2',{
+                data: function(){
+                    return {
+                        msg:'子组件中的数据'
+                    }
+                }
+            });
+
+            var Home = {
+                template:'<p>Welcome Home!</p>'
+            }
+
+            Vue.component('child-component3',function(resolve, reject){
+                window.setTimeout(function(){
+                    resolve({
+                        template:'<div>我是异步渲染的组件</div>'
+                    });
+                },2000);
+            });
+
+            var app = new Vue({
+                el:'#app',
+                data: {
+                    message:'父组件中的数据1',
+                    currentView:'comA',
+                    currentView2:Home
+                },
+                components:{
+                    comA:{
+                        template:'<div>组件A</div>'
+                    },
+                    comB:{
+                        template:'<div>组件B</div>'
+                    },
+                    comC:{
+                        template:'<div>组件C</div>'
+                    },
+                },
+                methods:{
+                    handleChangeView:function(component){
+                        this.currentView = 'com' + component;
+                    }
+                }
+            });
+
+        </script>
+    </body>
+</html>

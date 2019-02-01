@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VUE Demo</title>
+    </head>
+    <body>
+        <div id="app">
+            v-on在组件上监听自定义事件，如v-on:increase；也可以监听DOM原生事件，如v-on:click.native.
+            <p>总数1：{{total1}}</p>
+            <my-component1
+                @increase="handleGetTotal"
+                @reduce="handleGetTotal"
+            ></my-component1>
+
+            <p>总数2：{{total2}}</p>
+            <my-component2 v-model="total2"></my-component2>
+
+            {{message}}
+            <component-a></component-a>
+            <p>
+                父链，this.$parent和this.$children可以访问父组件或子组件。而且支持递归无限访问。但不建议这样做。
+                业务上，应尽量减少父子组件的数据耦合。尽量用props和$emit通信。
+            </p>
+            <p>
+                子组件索引
+            </p>
+            <button @click='handleRef'>通过ref获取子组件实例</button>
+            <component-b ref="compA"></component-b>
+        </div>
+        <script src="../vue.js"></script>
+        <script>
+            Vue.component('my-component1', {
+                template:'\
+                <div>\
+                    <button @click="handleIncrease">+1</button>\
+                    <button @click="handleReduce">-1</button>\
+                </div>',
+                data: function(){
+                    return {
+                        counter: 0
+                    };
+                },
+                methods:{
+                    handleIncrease: function(){
+                        this.counter++;
+                        this.$emit('increase',this.counter);
+                    },
+                    handleReduce: function(){
+                        this.counter--;
+                        this.$emit('reduce',this.counter);
+                    }
+                }
+            });
+            Vue.component('my-component2',{
+                template:'<button @click="handleClick">+1</button>',
+                data:function(){
+                    return {
+                        counter:0
+                    }
+                },
+                methods:{
+                    handleClick:function(){
+                        this.counter++;
+                        this.$emit('input', this.counter);
+                    }
+                }
+            });
+
+            var bus=new Vue();
+            Vue.component('component-a',{
+                template:'<button @click="handleEvent">传递事件</button>',
+                methods:{
+                    handleEvent: function(){
+                        bus.$emit('on-message','来自组件component-a的内容');
+                    }
+                }
+            });
+            Vue.component('component-b',{
+                template:'<div>子组件</div>',
+                data:function(){
+                    return {messageb:'子组件内容'};
+                }
+            });
+
+            var mydata={
+                total1:0,
+                total2:0,
+                message:''
+            }
+            var app = new Vue({
+                el:'#app',
+                data: mydata,
+                mounted:function(){
+                    var _this = this;
+                    bus.$on('on-message', function(msg){
+                        _this.message=msg;
+                    });
+                },
+                methods:{
+                    handleGetTotal:function(total){
+                        this.total1=total;
+                    },
+                    handleRef:function(){
+                        var msg=this.$refs.compA.messageb;
+                        console.log(msg);
+                    }
+                }
+            })
+
+        </script>
+    </body>
+</html>

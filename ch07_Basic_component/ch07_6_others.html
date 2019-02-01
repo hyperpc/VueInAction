@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>VUE Demo</title>
+    </head>
+    <body>
+        <div id="app">
+            <p>$nextTick</p>
+            <p>Vue异步更新队列。使用$nextTick可以避免调用队列中还未渲染出来的页面元素</p>
+            <p>$nextTick经常与一些第三方库配合使用，如propper.js, swiper</p>
+            <div id="div" v-if="showDiv">这是一段文本</div>
+            <button @click="getText">获取div内容</button>
+            
+            <p></p>
+            <p>X-Template</p>
+            <my-component></my-component>
+            <script type="text/x-template" id="my-component">
+                <div>这是组件的内容, 来自X-template</div>
+            </script>
+            
+            <p></p>
+            <p>Vue提供了Vue.extend和$mount两个方法来手动挂载一个实例</p>
+            <div id="mount-div"></div>
+        </div>
+        <script src="../vue.js"></script>
+        <script>
+            Vue.component('my-component',{
+                template:'#my-component'
+            });
+
+            var myComp = Vue.extend({
+                template:'<div>Hello: {{name}}</div>',
+                data:function(){
+                    return { name:'Aresn'};
+                }
+            });
+
+            //第一种写法
+            //new myComp().$mount('#mount-div');
+            //第二种写法
+            //new myComp({
+            //    el:"#mount-div"
+            //});
+            //第三种写法
+            var comp = new myComp().$mount();
+            document.getElementById('mount-div').appendChild(comp.$el);
+
+            var mydata = {
+                showDiv:false,
+            }
+            var app = new Vue({
+                el:'#app',
+                data: mydata,
+                methods:{
+                    getText:function(){
+                        this.showDiv=true;
+                        this.$nextTick(function(){
+                            var text = document.getElementById('div').innerHTML;
+                            console.log(text);
+                        });
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
