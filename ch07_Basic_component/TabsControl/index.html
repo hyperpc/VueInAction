@@ -7,20 +7,23 @@
     </head>
     <body>
         <div id="app" v-cloak>
-
+            <tabs v-model="activeKey">
+                
+                <pane label="标签一" name="1">
+                    标签一的内容
+                </pane>
+                <pane label="标签二" name="2">
+                    标签二的内容
+                </pane>
+                <pane label="标签三" name="3">
+                    标签三的内容
+                </pane>
+                
+            </tabs>
         </div>
         <script src="../../vue.js"></script>
-        <script src="panel.js"></script>
+        <script src="pane.js"></script>
         <script src="tabs.js"></script>
         <script src="index.js"></script>
-        <script>
-            var mydata = {
-
-            }
-            var app = new Vue({
-                el:'#app',
-                data: mydata
-            })
-        </script>
     </body>
 </html>

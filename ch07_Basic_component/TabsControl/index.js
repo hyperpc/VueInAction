@@ -1,4 +1,7 @@
-
+var mydata = {
+    activeKey:'1'
+}
 var app = new Vue({
-    el:'#app'
+    el:'#app',
+    data: mydata
 });
