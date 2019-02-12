@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Vue Directive Demo</title>
+    </head>
+    <body>
+        <div id="app">
+            <p>
+                自定义指令的选项，由5个可选的钩子函数组成：<br>
+                <b>bind</b>: 在绑定时执行一些初始化操作<br>
+                <b>inserted</b>: 被绑定元素插入父节点时调用(父节点可以不必存在document中)<br>
+                <b>update</b>: 被绑定元素所在模板更新时调用，不管绑定值是否变化<br>
+                <b>componentUpdated</b>: 被绑定元素所在模板完成一次更新周期时调用<br>
+                <b>unbind</b>: 只在指令与元素解绑时调用一次<br>
+            </p>
+            <input type="text" v-focus>
+            <br>
+            <div v-test:msg.a.b="message"></div>
+            <div v-test2="{msg:'hello', name:'Aresn'}"></div>
+        </div>
+        <script src="../vue.js"></script>
+        <script>
+            //Global Directive
+            Vue.directive('focus',{
+                inserted:function(el){
+                    el.focus();
+                }
+            });
+
+            Vue.directive('test',{
+                bind:function(el,binding, vnode){
+                    var keys=[];
+                    for(var i in vnode){
+                        keys.push(i);
+                    }
+
+                    el.innerHTML=
+                        'name: ' + binding.name + '<br>' +
+                        'value: ' + binding.value + '<br>' +
+                        'expression: ' + binding.expression + '<br>' +
+                        'argument: ' + binding.arg + '<br>' +
+                        'modifiers: ' + JSON.stringify(binding.modifiers) + '<br>' +
+                        'vnode keys: ' + keys.join(', ')
+                }
+            });
+
+            Vue.directive('test2',{
+                bind:function(el,binding, vnode){
+                    console.log(binding.value.msg);
+                    console.log(binding.value.name);
+                }
+            });
+
+            var mydata = {
+                message:'some text'
+            }
+            var app = new Vue({
+                el:'#app',
+                data: mydata,
+                //internal directive
+                //directives:{
+                //    focus:{
+                //        //指令选项
+                //    }
+                //}
+            })
+        </script>
+    </body>
+</html>
