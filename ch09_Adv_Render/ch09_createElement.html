@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>createElement Demo</title>
+    </head>
+    <body>
+        <div id="app">
+            所有组件树中，如果VNode是组件或含有组件的slot，那么VNode必须唯一。
+            <ele></ele>
+            <ele2></ele2>
+            <ele3></ele3>
+            <ele4>
+                <div>
+                    <Child></Child>
+                </div>
+            </ele4>
+            <ele5 :show5="show5"></ele5>
+            <button @click="show5=!show5">switch show5</button>
+            <ele6 :list="list"></ele6>
+            <ele7 :list="list7"></ele7>
+            <button @click="handleClick7">显示列表</button>
+            <ul v-if="list7.length">
+                <li v-for="item in list7">{{item}}</li>
+            </ul>
+            <p v-else>列表为空</p>
+
+            <ele8></ele8>
+            <div>
+                <input v-model="value">
+                <p>value:{{value}}</p>
+            </div>
+            <ele9></ele9>
+            <ele10></ele10>
+            <ele10>
+                <p>slot content</p>
+            </ele10>
+        </div>
+        <script src="../vue.js"></script>
+        <script>
+            //1. template
+            Vue.component('ele', {
+                template:'\
+                    <div id="element" \
+                        :class="{show:show}" \
+                        @click="handleClick">文本内容</div>',
+                data:function(){
+                    return {
+                        show:true
+                    }
+                },
+                methods:{
+                    handleClick:function(){
+                        console.log('clicked!');
+                    }
+                }
+            });
+
+            //2. Render
+            Vue.component('ele2',{
+                render: function(createElement){
+                    return createElement(
+                        'div',
+                        {
+                            class:{
+                                'show':this.show
+                            },
+                            attrs:{
+                                id:'element'
+                            },
+                            on:{
+                                click:this.handleClick
+                            }
+                        },
+                        '文本内容2'
+                    )
+                },
+                data:function(){
+                    return {
+                        show:true
+                    }
+                },
+                methods:{
+                    handleClick:function(){
+                        console.log('clicked!');
+                    }
+                }
+            });
+
+            var Child = {
+                render: function(createElement){
+                    return createElement('p', 'text3');
+                }
+            };
+
+            Vue.component('ele3',{
+                render: function(createElement){
+                    return createElement(
+                        'div',
+                        Array.apply(null,{
+                            length:5
+                        }).map(function(){
+                            return createElement(Child);
+                        })
+                    );
+                }
+            });
+
+            Vue.component('Child',{
+                render:function(createElement){
+                    return createElement('p','text4');
+                }
+            });
+
+            Vue.component('ele4',{
+                render:function(createElement){
+                    //clone slot node
+                    function cloneVNode(vnode){
+                        const cloneChildren = vnode.children && vnode.children.map(function(vnode){
+                            return cloneVNode(vnode);
+                        });
+                        const cloned = createElement(
+                            vnode.tag,
+                            vnode.data,
+                            cloneChildren
+                        );
+                        cloned.text = vnode.text;
+                        cloned.isComment = vnode.isComment;
+                        cloned.componentOptions = vnode.componentOptions;
+                        cloned.elm = vnode.elm;
+                        cloned.context = vnode.context;
+                        cloned.ns = vnode.ns;
+                        cloned.isStatic = vnode.isStatic;
+                        cloned.key = vnode.key;
+
+                        return cloned;
+                    }
+
+                    const vNodes = this.$slots.default;
+                    const clonedVNodes=vNodes.map(function(vnode){
+                        return cloneVNode(vnode);
+                    });
+
+                    return createElement('div', [
+                        vNodes,
+                        clonedVNodes
+                    ]);
+                }
+            });
+
+            Vue.component('ele5',{
+                render:function(createElement){
+                    if(this.show5){
+                        return createElement('p','show5的值为true');
+                    }else{
+                        return createElement('p','show5的值为false')
+                    }
+                },
+                props:{
+                    show5:{
+                        type:Boolean,
+                        default:false
+                    }
+                }
+            });
+
+            Vue.component('ele6',{
+                render:function(createElement){
+                    var nodes=[];
+                    for(var i =0;i<this.list.length;i++){
+                        nodes.push(createElement('p',this.list[i]));
+                    }
+                    return createElement('div', nodes);
+                },
+                props:{
+                    list:{
+                        type:Array
+                    }
+                }
+            });
+
+            Vue.component('ele7',{
+                render:function(createElement){
+                    if(this.list7.length){
+                        return createElement('ul',this.list7.map(function(item){
+                            return createElement('li', item);
+                        }));
+                    }else{
+                        return createElement('p','列表为空');
+                    }
+                },
+                props:{
+                    list7:{
+                        type:Array,
+                        default:function(){
+                            return ['《Vue.js In Action》'];
+                        }
+                    }
+                }
+            });
+
+            Vue.component('ele8',{
+                render:function(createElement){
+                    var __this=this;
+                    return createElement('div',[
+                        createElement('input',{
+                            domProps:{
+                                value:this.value
+                            },
+                            on:{
+                                input:function(event){
+                                    __this.value = event.target.value;
+                                }
+                            }
+                        }),
+                        createElement('p','value: '+this.value)
+                    ])
+                },
+                data:function(){
+                    return {
+                        value:''
+                    }
+                }
+            });
+
+            Vue.component('ele9',{
+                render:function(createElement){
+                    var _this = this;
+                    if(this.list9.length){
+                        var listNode = createElement('ul', this.list9.map(function(item){
+                            return createElement('li',item);
+                        }))
+                    }else{
+                        var listNode = createElement('p','暂无聊天内容');
+                    }
+                    return createElement('div',[
+                        listNode,
+                        createElement('input',{
+                            attrs:{
+                                placeholder:'输入内容，按回车键发送'
+                            },
+                            style:{
+                                width:'200px'
+                            },
+                            on:{
+                                keyup:function(event){
+                                    if(event.keyCode!==13) return;
+                                    _this.list9.push(event.target.value);
+                                    event.target.value='';
+                                }
+                            }
+                        })
+                    ])
+                },
+                data:function(){
+                    return {
+                        value:'',
+                        list9:[]
+                    }
+                }
+            });
+
+            Vue.component('ele10',{
+                render:function(createElement){
+                    if(this.$slots.default === undefined){
+                        return createElement('div', '未使用slot的文本');
+                    }else{
+                        return createElement('div', this.$slots.default);
+                    }
+                }
+            });
+
+            var mydata = {
+                show5:false,
+                list:[
+                    '《Vue.js实战》',
+                    '《Javascript高级程序设计》',                    
+                    '《Javascript语言精粹》'
+                ],
+                list7:[]
+            };
+            var app = new Vue({
+                el:'#app',
+                data: mydata,
+                methods:{
+                    handleClick7:function(){
+                        console.log('handleClick7');
+                        this.list7=[
+                            '《Vue.js实战》',
+                            '《Javascript高级程序设计》',                    
+                            '《Javascript语言精粹》'
+                        ];
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
