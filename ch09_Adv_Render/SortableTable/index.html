@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Sort Table Demo</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <div id="app" v-cloak>
+            <v-table :data="data" :columns="columns"></v-table>
+            <button @click="handleAddData">添加数据</button>
+        </div>
+        <script src="../../vue.js"></script>
+        <script src="./table.js"></script>
+        <script src="./index.js"></script>
+    </body>
+</html>
